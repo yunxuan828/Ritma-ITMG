@@ -142,6 +142,14 @@ dir="{{ Helper::determineLanguageDirection() }}">
                     <!-- Navbar Right Menu -->
                     <div class="navbar-custom-menu">
                         <ul class="nav navbar-nav">
+                        @can('index', \App\Models\Asset::class)
+                                <li aria-hidden="true">
+                                    <a href="https://trendatasc.com/hesk352/admin" target="_blank" data-tooltip="true" data-placement="bottom" data-title="Help Desk">
+                                        <i class="fas fa-headset fa-fw"></i>
+                                        <span class="sr-only">Help Desk Support</span>
+                                    </a>
+                                </li>
+                            @endcan
                             @can('index', \App\Models\Asset::class)
                                 <li aria-hidden="true"{!! (Request::is('hardware*') ? ' class="active"' : '') !!}>
                                     <a href="{{ url('hardware') }}" {{$snipeSettings->shortcuts_enabled == 1 ? "accesskey=1" : ''}} tabindex="-1" data-tooltip="true" data-placement="bottom" data-title="{{ trans('general.assets') }}">

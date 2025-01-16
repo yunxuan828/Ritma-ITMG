@@ -26,6 +26,7 @@ use App\Http\Controllers\Auth\ResetPasswordController;
 use App\Livewire\Importer;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Auth;
+use App\Http\Controllers\ITFileSharingController;
 
 Route::group(['middleware' => 'auth'], function () {
     /*
@@ -131,6 +132,15 @@ Route::group(['middleware' => 'auth'], function () {
     Route::resource('departments', DepartmentsController::class, [
         'parameters' => ['department' => 'department_id'],
     ]);
+
+    /*
+    * IT File Sharings
+    */
+    Route::resource('it-file-sharing', ITFileSharingController::class, [
+        
+    ]);
+
+    Route::get('/download/{fileId}', [ITFileSharingController::class, 'download'])->name('it-file-sharing.download');
 });
 
 /*

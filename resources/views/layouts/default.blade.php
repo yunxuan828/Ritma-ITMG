@@ -802,6 +802,16 @@ dir="{{ Helper::determineLanguageDirection() }}">
                             </li>
                         @endcan
 
+                        <!-- IT File Sharing Sidebar -->
+                        @can('view', \App\Models\ITFileSharing::class)
+                            <li{!! (Request::is('it-file-sharing') ? ' class="active"' : '') !!}>
+                                <a href="{{ route('it-file-sharing.index') }}">
+                                <i class="fas fa-fw fa-file-alt"></i>
+                                    <span>IT File Sharing</span>
+                                </a>
+                            </li>
+                        @endcan
+
 
                     </ul>
                 </section>

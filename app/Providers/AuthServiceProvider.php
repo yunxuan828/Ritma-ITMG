@@ -20,6 +20,7 @@ use App\Models\PredefinedKit;
 use App\Models\Statuslabel;
 use App\Models\Supplier;
 use App\Models\User;
+use App\Models\ITFileSharing;
 use App\Policies\AccessoryPolicy;
 use App\Policies\AssetModelPolicy;
 use App\Policies\AssetPolicy;
@@ -38,10 +39,13 @@ use App\Policies\PredefinedKitPolicy;
 use App\Policies\StatuslabelPolicy;
 use App\Policies\SupplierPolicy;
 use App\Policies\UserPolicy;
+use App\Policies\ITFileSharingPolicy;
 use Carbon\Carbon;
 use Illuminate\Foundation\Support\Providers\AuthServiceProvider as ServiceProvider;
 use Illuminate\Support\Facades\Gate;
 use Laravel\Passport\Passport;
+
+
 
 class AuthServiceProvider extends ServiceProvider
 {
@@ -71,6 +75,7 @@ class AuthServiceProvider extends ServiceProvider
         User::class => UserPolicy::class,
         Manufacturer::class => ManufacturerPolicy::class,
         Company::class => CompanyPolicy::class,
+        ITFileSharing::class => ITFileSharingPolicy::class,
     ];
 
     /**
@@ -238,6 +243,11 @@ class AuthServiceProvider extends ServiceProvider
         // This determines whether the user can edit their profile based on the setting in Admin > General
         Gate::define('self.profile', function ($user) {
             return $user->canEditProfile();
+        });
+
+        
+        Gate::define('it-file-sharing.upload', function ($user) {
+            return $user->hasRole('admin');
         });
 
     }

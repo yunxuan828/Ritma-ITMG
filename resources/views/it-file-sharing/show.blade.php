@@ -10,7 +10,7 @@
         <h3 class="box-title">File Details</h3>
         <div class="box-tools pull-right">
             <a href="{{ route('it-file-sharing.index') }}" class="btn btn-default">Back to List</a>
-            <a href="{{ Storage::url($itFileSharing->file_path) }}" class="btn btn-primary" target="_blank">
+            <a href="{{ Storage::disk('public_files')->url($itFileSharing->file_path) }}" class="btn btn-primary">
                 <i class="fa fa-download"></i> Download
             </a>
         </div>
@@ -52,14 +52,14 @@
                         <img src="{{ Storage::url($itFileSharing->file_path) }}" class="img-responsive" alt="Image Preview">
                     @elseif($extension === 'pdf')
                         <div class="pdf-container" style="height: 800px;">
-                            <iframe src="{{ Storage::url($itFileSharing->file_path) }}" 
+                            <iframe src="{{ Storage::disk('public_files')->url($itFileSharing->file_path) }}" 
                                     width="100%" 
                                     height="100%" 
                                     frameborder="0">
                             </iframe>
-                        </div>
+                        </div>  
                     @elseif(in_array($extension, ['txt', 'csv', 'md']))
-                        <pre class="text-preview">{{ Storage::get(str_replace('public/', '', $itFileSharing->file_path)) }}</pre>
+                        <pre class="text-preview">{{ Storage::get(str_replace('public_files', '', $itFileSharing->file_path)) }}</pre>
                     @else
                         <div class="alert alert-info">
                             <i class="fa fa-info-circle"></i> 

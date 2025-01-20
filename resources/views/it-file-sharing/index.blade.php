@@ -17,12 +17,12 @@
             </div>
             <div class="box-body">
                 <!-- Search Form -->
-                <form action="{{ route('it-file-sharing.index') }}" method="GET" class="mb-4">
-                    <div class="input-group">
+                <form action="{{ route('it-file-sharing.index') }}" method="GET">
+                    <div class="input-group" style="max-width: 300px; margin-bottom: 15px;">
                         <input type="text" name="search" class="form-control" placeholder="Search files..." value="{{ request('search') }}">
-                        <div class="input-group-append">
+                        <span class="input-group-btn">
                             <button type="submit" class="btn btn-primary">Search</button>
-                        </div>
+                        </span>
                     </div>
                 </form>
                 <table class="table">
@@ -45,7 +45,7 @@
                             <td>{{ $file->created_at->format('Y-m-d H:i:s') }}</td>
                             <td>{{ $file->updated_at->format('Y-m-d H:i:s') }}</td>
                             <td>
-                                <a href="{{ route('it-file-sharing.show', $file) }}" class="btn btn-sm btn-info">
+                                <a href="{{ Storage::disk('public_files')->url($file->file_path) }}" class="btn btn-sm btn-info" target="_blank">
                                     <i class="fa fa-eye"></i> View
                                 </a>
                                 <a href="{{ route('it-file-sharing.download', $file->id) }}" class="btn btn-sm btn-success">

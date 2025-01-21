@@ -46,7 +46,7 @@ class ITFileSharingController extends Controller
     
         $file = $request->file('file');
         $originalName = $file->getClientOriginalName();
-        $path = $file->storeAs('it-files', $originalName, 'public_files'); // Use 'public_files' disk
+        $path = $file->storeAs('', $originalName, 'public_files'); // Use 'public_files' disk
 
         ITFileSharing::create([
             'title' => $validated['title'],
@@ -88,7 +88,7 @@ class ITFileSharingController extends Controller
         // Store new file
         $file = $request->file('file');
         $originalName = $file->getClientOriginalName();
-        $path = $file->storeAs('it-files', $originalName, 'public_files'); // Use 'public_files' disk
+        $path = $file->storeAs('', $originalName, 'public_files'); // Use 'public_files' disk
         $itFileSharing->file_path = $path;
         }   
 
@@ -102,7 +102,7 @@ class ITFileSharingController extends Controller
     {
         $this->authorize('delete', $itFileSharing);
         
-        Storage::disk('public')->delete($itFileSharing->file_path);
+        Storage::disk('public_files')->delete($itFileSharing->file_path);
         $itFileSharing->delete();
 
     return redirect()->route('it-file-sharing.index')

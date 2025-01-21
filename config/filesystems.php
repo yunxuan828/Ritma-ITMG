@@ -51,8 +51,8 @@ $config = [
         // This for the IT File Sharing module YUN XUAN
         'public_files' => [
         'driver' => 'local',
-        'root' => storage_path('app/public'),
-        'url' => env('APP_URL').'/storage',
+        'root' => public_path('it-files'),
+        'url' => env('APP_URL').'/it-files',
         'visibility' => 'public',
         ],
 

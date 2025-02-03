@@ -10,6 +10,8 @@ use App\Http\Controllers\DepreciationsController;
 use App\Http\Controllers\GroupsController;
 use App\Http\Controllers\HealthController;
 use App\Http\Controllers\ImportsController;
+use App\Http\Controllers\ITFileSharingController;
+use App\Http\Controllers\ITFolderController;
 use App\Http\Controllers\LabelsController;
 use App\Http\Controllers\LocationsController;
 use App\Http\Controllers\ManufacturersController;
@@ -26,7 +28,6 @@ use App\Http\Controllers\Auth\ResetPasswordController;
 use App\Livewire\Importer;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Auth;
-use App\Http\Controllers\ITFileSharingController;
 
 Route::group(['middleware' => 'auth'], function () {
     /*
@@ -134,11 +135,23 @@ Route::group(['middleware' => 'auth'], function () {
     ]);
 
     /*
-    * IT File Sharings
+    * IT File Sharing
     */
-    Route::resource('it-file-sharing', ITFileSharingController::class, [
-        
-    ]);
+    Route::get('it-sharing', [ITFileSharingController::class, 'index'])->name('it-file-sharing.index');
+    Route::get('it-sharing/folder/{folderId}/files', [ITFileSharingController::class, 'files'])->name('it-file-sharing.files');
+    Route::get('it-sharing/create', [ITFileSharingController::class, 'create'])->name('it-file-sharing.create');
+    Route::post('it-sharing', [ITFileSharingController::class, 'store'])->name('it-file-sharing.store');
+    Route::get('it-sharing/{itFileSharing}/edit', [ITFileSharingController::class, 'edit'])->name('it-file-sharing.edit');
+    Route::put('it-sharing/{itFileSharing}', [ITFileSharingController::class, 'update'])->name('it-file-sharing.update');
+    Route::delete('it-sharing/{itFileSharing}', [ITFileSharingController::class, 'destroy'])->name('it-file-sharing.destroy');
+    Route::get('it-sharing/{itFileSharing}/download', [ITFileSharingController::class, 'download'])->name('it-file-sharing.download');
+
+    // Folder management routes
+    Route::get('it-sharing/folder/create', [ITFolderController::class, 'create'])->name('it-folders.create');
+    Route::post('it-sharing/folder', [ITFolderController::class, 'store'])->name('it-folders.store');
+    Route::get('it-sharing/folder/{folder}/edit', [ITFolderController::class, 'edit'])->name('it-folders.edit');
+    Route::put('it-sharing/folder/{folder}', [ITFolderController::class, 'update'])->name('it-folders.update');
+    Route::delete('it-sharing/folder/{folder}', [ITFolderController::class, 'destroy'])->name('it-folders.destroy');
 
     Route::get('/download/{fileId}', [ITFileSharingController::class, 'download'])->name('it-file-sharing.download');
 });

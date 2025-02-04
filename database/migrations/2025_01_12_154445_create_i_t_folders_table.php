@@ -20,14 +20,14 @@ return new class extends Migration
             $table->softDeletes(); // Add soft delete support
         });
 
-        // // Create the default "Uncategorized" folder
-        // DB::table('i_t_folders')->insert([
-        //     'name' => 'Uncategorized',
-        //     'description' => 'Default folder for uncategorized files',
-        //     'created_by' => 1, // Assuming ID 1 is an admin user
-        //     'created_at' => now(),
-        //     'updated_at' => now(),
-        // ]);
+        // Create the default "Uncategorized" folder
+        DB::table('i_t_folders')->insert([
+            'name' => 'Uncategorized',
+            'description' => 'Default folder for uncategorized files',
+            'created_by' => 1, // Assuming ID 1 is an admin user
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
     }
 
     public function down()

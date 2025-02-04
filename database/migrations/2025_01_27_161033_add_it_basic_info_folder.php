@@ -24,32 +24,32 @@ return new class extends Migration
             ->value('id');
 
         // Move existing files to IT Basic Info folder (except those already in Uncategorized)
-        if ($itBasicInfoId) {
-            DB::table('i_t_file_sharings')
-                ->whereNull('folder_id')
-                ->update(['folder_id' => $itBasicInfoId]);
-        }
+        // if ($itBasicInfoId) {
+        //     DB::table('i_t_file_sharings')
+        //         ->whereNull('folder_id')
+        //         ->update(['folder_id' => $itBasicInfoId]);
+        // }
     }
 
     public function down()
     {
         // Get the ID of the Uncategorized folder
-        $uncategorizedId = DB::table('i_t_folders')
-            ->where('name', 'Uncategorized')
-            ->value('id');
+        // $uncategorizedId = DB::table('i_t_folders')
+        //     ->where('name', 'Uncategorized')
+        //     ->value('id');
 
-        // Move files back to Uncategorized
-        if ($uncategorizedId) {
-            $itBasicInfoId = DB::table('i_t_folders')
-                ->where('name', 'IT Basic Info')
-                ->value('id');
+        // // Move files back to Uncategorized
+        // if ($uncategorizedId) {
+        //     $itBasicInfoId = DB::table('i_t_folders')
+        //         ->where('name', 'IT Basic Info')
+        //         ->value('id');
 
-            if ($itBasicInfoId) {
-                DB::table('i_t_file_sharings')
-                    ->where('folder_id', $itBasicInfoId)
-                    ->update(['folder_id' => $uncategorizedId]);
-            }
-        }
+        //     if ($itBasicInfoId) {
+        //         DB::table('i_t_file_sharings')
+        //             ->where('folder_id', $itBasicInfoId)
+        //             ->update(['folder_id' => $uncategorizedId]);
+        //     }
+        // }
 
         // Delete the IT Basic Info folder
         DB::table('i_t_folders')

@@ -19,17 +19,17 @@ return new class extends Migration
             ->where('name', 'Uncategorized')
             ->value('id');
 
-        // Ensure the 'Uncategorized' folder exists
-        if (!$uncategorizedId) {
-            // Create it if necessary (adjust as needed)
-            $uncategorizedId = DB::table('i_t_folders')->insertGetId([
-                'name' => 'Uncategorized',
-                'description' => 'Default folder for uncategorized files',
-                'created_by' => 1, // Ensure this user exists
-                'created_at' => now(),
-                'updated_at' => now(),
-            ]);
-        }
+        // // Ensure the 'Uncategorized' folder exists
+        // if (!$uncategorizedId) {
+        //     // Create it if necessary (adjust as needed)
+        //     $uncategorizedId = DB::table('i_t_folders')->insertGetId([
+        //         'name' => 'Uncategorized',
+        //         'description' => 'Default folder for uncategorized files',
+        //         'created_by' => 1, // Ensure this user exists
+        //         'created_at' => now(),
+        //         'updated_at' => now(),
+        //     ]);
+        // }
 
         // Update existing records
         DB::table('i_t_file_sharings')

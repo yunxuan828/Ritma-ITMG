@@ -49,7 +49,7 @@ class ITFileSharingController extends Controller
         ]);
 
         $file = $request->file('file');
-        $path = $file->store('it-files');
+        $path = $file->store('it-files', 'public_files');
 
         $validated['file_path'] = $path;
         $validated['original_filename'] = $file->getClientOriginalName();
@@ -70,10 +70,24 @@ class ITFileSharingController extends Controller
     public function update(Request $request, ITFileSharing $itFileSharing)
     {
         $validated = $request->validate([
-            'name' => 'required|string|max:255',
+            'title' => 'required|string|max:255',
             'description' => 'nullable|string',
-            'folder_id' => 'required|exists:i_t_folders,id'
+            'folder_id' => 'required|exists:i_t_folders,id',
+            'file' => 'nullable|file|max:10240'
         ]);
+
+        // Handle file upload if a new file is provided
+        if ($request->hasFile('file')) {
+            // Delete old file
+            Storage::disk('public_files')->delete($itFileSharing->file_path);
+            
+            // Store new file
+            $file = $request->file('file');
+            $path = $file->store('it-files', 'public_files');
+            
+            $validated['file_path'] = $path;
+            $validated['original_filename'] = $file->getClientOriginalName();
+        }
 
         $itFileSharing->update($validated);
 
@@ -84,7 +98,7 @@ class ITFileSharingController extends Controller
     public function destroy(ITFileSharing $itFileSharing)
     {
         $folderId = $itFileSharing->folder_id;
-        Storage::delete($itFileSharing->file_path);
+        Storage::disk('public_files')->delete($itFileSharing->file_path);
         $itFileSharing->delete();
 
         return redirect()->route('it-file-sharing.files', $folderId)
@@ -93,9 +107,19 @@ class ITFileSharingController extends Controller
 
     public function download(ITFileSharing $itFileSharing)
     {
-        return Storage::download(
+        // Check if file exists in storage
+        if (!Storage::disk('public_files')->exists($itFileSharing->file_path)) {
+            return back()->with('error', 'File not found.');
+        }
+
+        // Get file mime type
+        $mimeType = Storage::disk('public_files')->mimeType($itFileSharing->file_path);
+
+        // Return file download response
+        return Storage::disk('public_files')->download(
             $itFileSharing->file_path,
-            $itFileSharing->original_filename
+            $itFileSharing->original_filename,
+            ['Content-Type' => $mimeType]
         );
     }
 }

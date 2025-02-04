@@ -153,7 +153,6 @@ Route::group(['middleware' => 'auth'], function () {
     Route::put('it-sharing/folder/{folder}', [ITFolderController::class, 'update'])->name('it-folders.update');
     Route::delete('it-sharing/folder/{folder}', [ITFolderController::class, 'destroy'])->name('it-folders.destroy');
 
-    Route::get('/download/{fileId}', [ITFileSharingController::class, 'download'])->name('it-file-sharing.download');
 });
 
 /*

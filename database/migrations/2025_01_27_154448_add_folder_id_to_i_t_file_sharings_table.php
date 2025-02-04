@@ -21,15 +21,15 @@ return new class extends Migration
         });
 
         // Now update existing records to use the default "Uncategorized" folder
-        $uncategorizedId = DB::table('i_t_folders')
-            ->where('name', 'Uncategorized')
-            ->value('id');
+        // $uncategorizedId = DB::table('i_t_folders')
+        //     ->where('name', 'Uncategorized')
+        //     ->value('id');
             
-        if ($uncategorizedId) {
-            DB::table('i_t_file_sharings')
-                ->whereNull('folder_id')
-                ->update(['folder_id' => $uncategorizedId]);
-        }
+        // if ($uncategorizedId) {
+        //     DB::table('i_t_file_sharings')
+        //         ->whereNull('folder_id')
+        //         ->update(['folder_id' => $uncategorizedId]);
+        // }
 
         // Finally make the column required
         Schema::table('i_t_file_sharings', function (Blueprint $table) {

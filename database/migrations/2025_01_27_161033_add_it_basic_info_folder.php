@@ -13,7 +13,7 @@ return new class extends Migration
         DB::table('i_t_folders')->insert([
             'name' => 'IT Basic Info',
             'description' => 'Basic IT information and documentation',
-            'created_by' => 1, // Assuming ID 1 is an admin user
+            //'created_by' => 1, // Assuming ID 1 is an admin user
             'created_at' => now(),
             'updated_at' => now(),
         ]);

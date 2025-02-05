@@ -9,21 +9,21 @@ class ITFileSharingPolicy
 {
     public function view(User $user)
     {
-        return true; // All authenticated users can view
+        return $user->isSuperUser(); // Only superusers can view
     }
 
     public function create(User $user)
     {
-        return $user->hasRole('admin'); // Only admins can upload
+        return $user->isSuperUser(); // Only superusers can upload
     }
 
     public function update(User $user, ITFileSharing $itFileSharing)
     {
-        return $user->hasRole('admin');
+        return $user->isSuperUser();
     }
 
     public function delete(User $user, ITFileSharing $itFileSharing)
     {
-        return $user->hasRole('admin');
+        return $user->isSuperUser();
     }
 }

@@ -31,6 +31,7 @@ use Carbon\Carbon;
 use \Illuminate\Contracts\View\View;
 use \Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\File;
 
 class AcceptanceController extends Controller
 {
@@ -105,8 +106,13 @@ class AcceptanceController extends Controller
         /**
          * Get the signature and save it
          */
-        if (! Storage::exists('private_uploads/signatures')) {
-            Storage::makeDirectory('private_uploads/signatures', 775);
+        // if (! Storage::exists('private_uploads/signatures')) {
+        //     Storage::makeDirectory('private_uploads/signatures', 775);
+        // }
+        // Add new storage logic before the asset acceptance check
+        $signaturePath = public_path('uploads/signatures');
+        if (!File::exists($signaturePath)) {
+            File::makeDirectory($signaturePath, 0755, true);
         }
 
 
@@ -139,7 +145,7 @@ class AcceptanceController extends Controller
                     $data_uri = $request->input('signature_output');
                     $encoded_image = explode(',', $data_uri);
                     $decoded_image = base64_decode($encoded_image[1]);
-                    Storage::put('private_uploads/signatures/' . $sig_filename, (string)$decoded_image);
+                    Storage::put('uploads/signatures/' . $sig_filename, (string)$decoded_image);
 
                     // No image data is present, kick them back.
                     // This mostly only applies to users on super-duper crapola browsers *cough* IE *cough*

@@ -49,10 +49,11 @@ class ITFileSharingController extends Controller
         ]);
 
         $file = $request->file('file');
-        $path = $file->store('it-files', 'public_files');
-
+        $originalName = $file->getClientOriginalName();
+        $path = $file->storeAs('it-files', $originalName, 'public_files');
+        
         $validated['file_path'] = $path;
-        $validated['original_filename'] = $file->getClientOriginalName();
+        $validated['original_filename'] = $originalName;
         $validated['uploaded_by'] = Auth::id();
 
         ITFileSharing::create($validated);
@@ -83,10 +84,11 @@ class ITFileSharingController extends Controller
             
             // Store new file
             $file = $request->file('file');
-            $path = $file->store('it-files', 'public_files');
+            $originalName = $file->getClientOriginalName();
+            $path = $file->storeAs('it-files', $originalName, 'public_files');
             
             $validated['file_path'] = $path;
-            $validated['original_filename'] = $file->getClientOriginalName();
+            $validated['original_filename'] = $originalName;
         }
 
         $itFileSharing->update($validated);

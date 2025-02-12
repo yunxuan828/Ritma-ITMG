@@ -144,7 +144,7 @@ dir="{{ Helper::determineLanguageDirection() }}">
                         <ul class="nav navbar-nav">
                         @can('index', \App\Models\Asset::class)
                                 <li aria-hidden="true">
-                                    <a href="https://trendatasc.com/hesk352/admin" target="_blank" data-tooltip="true" data-placement="bottom" data-title="Help Desk">
+                                    <a href="https://hesk.imritma.com/admin" target="_blank" data-tooltip="true" data-placement="bottom" data-title="Help Desk">
                                         <i class="fas fa-headset fa-fw"></i>
                                         <span class="sr-only">Help Desk Support</span>
                                     </a>

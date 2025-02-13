@@ -58,7 +58,7 @@
                             <tr>
                                 <td>{{ $file->title }}</td>
                                 <td>{{ $file->description }}</td>
-                                <td>{{ optional($file->uploader)->name ?? 'Unknown' }}</td>
+                                <td>{{ optional($file->uploader)->first_name . ' ' . optional($file->uploader)->last_name ?? 'Unknown' }}</td>
                                 <td>{{ $file->created_at->format('Y-m-d H:i:s') }}</td>
                                 <td>{{ $file->updated_at->format('Y-m-d H:i:s') }}</td>
                                 <td>

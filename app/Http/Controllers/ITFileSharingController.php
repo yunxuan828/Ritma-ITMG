@@ -125,13 +125,13 @@ class ITFileSharingController extends Controller
             return back()->with('error', 'File not found.');
         }
 
-        // Get file mime type using File facade
-        $path = storage_path('app/public_files/' . $itFileSharing->file_path);
+        // Get file path using Storage facade
+        $path = Storage::disk('public_files')->path($itFileSharing->file_path);
         $mimeType = mime_content_type($path);
 
         // Return file download response
-        return response()->file(storage_path('app/public_files/' . $itFileSharing->file_path),
-            $itFileSharing->file_path,
+        return response()->download(
+            $path,
             $itFileSharing->original_filename,
             ['Content-Type' => $mimeType]
         );

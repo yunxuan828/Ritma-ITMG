@@ -42,24 +42,35 @@ class ITFileSharingController extends Controller
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'title' => 'required|string|max:255',
-            'description' => 'nullable|string',
             'folder_id' => 'required|exists:i_t_folders,id',
-            'file' => 'required|file|max:10240'
+            'files' => 'required|array',
+            'files.*' => 'file|max:10240',
+            'titles' => 'array',
+            'titles.*' => 'nullable|string|max:255',
+            'descriptions' => 'array',
+            'descriptions.*' => 'nullable|string'
         ]);
 
-        $file = $request->file('file');
-        $originalName = $file->getClientOriginalName();
-        $path = $file->storeAs('it-files', $originalName, 'public_files');
-        
-        $validated['file_path'] = $path;
-        $validated['original_filename'] = $originalName;
-        $validated['uploaded_by'] = Auth::id();
-
-        ITFileSharing::create($validated);
+        $uploadedFiles = [];
+        foreach ($request->file('files') as $index => $file) {
+            $originalName = $file->getClientOriginalName();
+            $fileTitle = $request->titles[$index] ?? pathinfo($originalName, PATHINFO_FILENAME);
+            $path = $file->storeAs('it-files', $originalName, 'public_files');
+            
+            $fileData = [
+                'title' => $fileTitle,
+                'description' => $request->descriptions[$index] ?? null,
+                'folder_id' => $validated['folder_id'],
+                'file_path' => $path,
+                'original_filename' => $originalName,
+                'uploaded_by' => Auth::id()
+            ];
+            
+            $uploadedFiles[] = ITFileSharing::create($fileData);
+        }
 
         return redirect()->route('it-file-sharing.files', $validated['folder_id'])
-                        ->with('success', 'File uploaded successfully.');
+                        ->with('success', count($uploadedFiles) . ' file(s) uploaded successfully.');
     }
 
     public function edit(ITFileSharing $itFileSharing)
@@ -114,11 +125,12 @@ class ITFileSharingController extends Controller
             return back()->with('error', 'File not found.');
         }
 
-        // Get file mime type
-        $mimeType = Storage::disk('public_files')->mimeType($itFileSharing->file_path);
+        // Get file mime type using File facade
+        $path = storage_path('app/public_files/' . $itFileSharing->file_path);
+        $mimeType = mime_content_type($path);
 
         // Return file download response
-        return Storage::disk('public_files')->download(
+        return response()->file(storage_path('app/public_files/' . $itFileSharing->file_path),
             $itFileSharing->file_path,
             $itFileSharing->original_filename,
             ['Content-Type' => $mimeType]

@@ -15,24 +15,6 @@
                 <form action="{{ route('it-file-sharing.store') }}" method="POST" enctype="multipart/form-data">
                     @csrf
                     <div class="form-group">
-                        <label for="title">Title</label>
-                        <input type="text" class="form-control @error('title') is-invalid @enderror" 
-                               id="title" name="title" value="{{ old('title') }}" required>
-                        @error('title')
-                            <div class="invalid-feedback">{{ $message }}</div>
-                        @enderror
-                    </div>
-
-                    <div class="form-group">
-                        <label for="description">Description</label>
-                        <textarea class="form-control @error('description') is-invalid @enderror" 
-                                  id="description" name="description">{{ old('description') }}</textarea>
-                        @error('description')
-                            <div class="invalid-feedback">{{ $message }}</div>
-                        @enderror
-                    </div>
-
-                    <div class="form-group">
                         <label for="folder_id">Folder</label>
                         <select class="form-control @error('folder_id') is-invalid @enderror" 
                                 id="folder_id" name="folder_id" required>
@@ -49,14 +31,16 @@
                     </div>
 
                     <div class="form-group">
-                        <label for="file">File</label>
-                        <input type="file" class="form-control @error('file') is-invalid @enderror" 
-                               id="file" name="file" required>
-                        <small class="form-text text-muted">Maximum file size: 10MB</small>
-                        @error('file')
+                        <label for="files">Files</label>
+                        <input type="file" class="form-control @error('files') is-invalid @enderror" 
+                               id="files" name="files[]" multiple required onchange="handleFileSelect(this)">
+                        <small class="form-text text-muted">Maximum file size: 10MB per file. Multiple files allowed.</small>
+                        @error('files')
                             <div class="invalid-feedback">{{ $message }}</div>
                         @enderror
                     </div>
+
+                    <div id="file-descriptions"></div>
 
                     <div class="form-group">
                         <button type="submit" class="btn btn-primary">
@@ -71,4 +55,24 @@
         </div>
     </div>
 </div>
+
+@push('js')
+<script>
+function handleFileSelect(input) {
+    const container = document.getElementById('file-descriptions');
+    container.innerHTML = '';
+
+    Array.from(input.files).forEach((file, index) => {
+        const div = document.createElement('div');
+        div.className = 'form-group';
+        div.innerHTML = `
+            <label>Description for ${file.name}</label>
+            <textarea class="form-control" name="descriptions[]" rows="2"
+                      placeholder="Enter description for ${file.name}"></textarea>
+        `;
+        container.appendChild(div);
+    });
+}
+</script>
+@endpush
 @endsection

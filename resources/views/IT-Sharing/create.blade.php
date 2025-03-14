@@ -46,7 +46,7 @@
                         <label for="files" class="col-md-3 control-label">Files</label>
                         <div class="col-md-7">
                             <input type="file" class="form-control" id="files" name="files[]" multiple required onchange="handleFileSelect(this)">
-                            <small class="form-text text-muted">Maximum file size: 10MB per file. Multiple files allowed.</small>
+                            <small class="form-text text-muted">Maximum file size: 50MB per file. Multiple files allowed.</small>
                             {!! $errors->first('files', '<span class="alert-msg" aria-hidden="true"><i class="fas fa-times" aria-hidden="true"></i> :message</span>') !!}
                         </div>
                     </div>

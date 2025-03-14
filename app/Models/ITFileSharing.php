@@ -12,6 +12,7 @@ class ITFileSharing extends Model
         'title',
         'description',
         'file_path',
+        'original_filename',
         'uploaded_by',
         'folder_id'
     ];

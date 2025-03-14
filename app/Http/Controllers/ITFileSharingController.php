@@ -135,7 +135,7 @@ class ITFileSharingController extends Controller
             'title' => 'required|string|max:255',
             'description' => 'nullable|string',
             'folder_id' => 'required|exists:i_t_folders,id',
-            'file' => 'nullable|file|max:10240'
+            'file' => 'nullable|file|max:51200'
         ]);
 
         $itFileSharing->title = $validated['title'];

@@ -67,7 +67,7 @@
                         <div class="col-md-7">
                             <input type="file" class="form-control" id="file" name="file">
                             <small class="form-text text-muted">Current file: {{ $item->original_filename ?? 'None' }}<br>
-                            Leave empty to keep current file. Maximum file size: 10MB.</small>
+                            Leave empty to keep current file. Maximum file size: 50MB.</small>
                             {!! $errors->first('file', '<span class="alert-msg" aria-hidden="true"><i class="fas fa-times" aria-hidden="true"></i> :message</span>') !!}
                         </div>
                     </div>

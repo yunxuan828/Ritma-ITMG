@@ -1291,5 +1291,44 @@ Route::group(['prefix' => 'v1', 'middleware' => ['api', 'throttle:api']], functi
         ])->name('api.assets.labels');
         // end generate label routes
 
+        /**
+         * IT Folders routes
+         */
+        Route::group(['prefix' => 'it-folders'], function () {
+            Route::get('/',
+                [
+                    Api\ITFoldersController::class, 
+                    'index'
+                ]
+            )->name('api.it-folders.index');
+
+            Route::post('/',
+                [
+                    Api\ITFoldersController::class, 
+                    'store'
+                ]
+            )->name('api.it-folders.store');
+
+            Route::get('/{id}',
+                [
+                    Api\ITFoldersController::class, 
+                    'show'
+                ]
+            )->name('api.it-folders.show');
+
+            Route::put('/{id}',
+                [
+                    Api\ITFoldersController::class, 
+                    'update'
+                ]
+            )->name('api.it-folders.update');
+
+            Route::delete('/{id}',
+                [
+                    Api\ITFoldersController::class, 
+                    'destroy'
+                ]
+            )->name('api.it-folders.destroy');
+        });
 
 }); // end API routes

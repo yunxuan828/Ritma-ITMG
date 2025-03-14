@@ -149,9 +149,9 @@ Route::group(['middleware' => 'auth'], function () {
     // Folder management routes
     Route::get('it-sharing/folder/create', [ITFolderController::class, 'create'])->name('it-folders.create');
     Route::post('it-sharing/folder', [ITFolderController::class, 'store'])->name('it-folders.store');
-    Route::get('it-sharing/folder/{folder}/edit', [ITFolderController::class, 'edit'])->name('it-folders.edit');
-    Route::put('it-sharing/folder/{folder}', [ITFolderController::class, 'update'])->name('it-folders.update');
-    Route::delete('it-sharing/folder/{folder}', [ITFolderController::class, 'destroy'])->name('it-folders.destroy');
+    Route::get('it-sharing/folder/{folderId}/edit', [ITFolderController::class, 'edit'])->name('it-folders.edit');
+    Route::put('it-sharing/folder/{folderId}', [ITFolderController::class, 'update'])->name('it-folders.update');
+    Route::delete('it-sharing/folder/{folderId}', [ITFolderController::class, 'destroy'])->name('it-folders.destroy');
 
 });
 

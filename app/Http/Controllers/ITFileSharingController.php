@@ -7,15 +7,33 @@ use App\Models\ITFolder;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
+use App\Helpers\Helper;
 
 class ITFileSharingController extends Controller
 {
+    /**
+     * Constructor
+     * 
+     * Sets up middleware and authorization
+     */
     public function __construct()
     {
         $this->middleware('auth');
+        $this->middleware(function ($request, $next) {
+            // Check if user is an administrator
+            if (!auth()->user()->isSuperUser()) {
+                abort(403, 'Unauthorized action.');
+            }
+            return $next($request);
+        });
         $this->authorizeResource(ITFileSharing::class, 'itFileSharing');
     }
 
+    /**
+     * Display a listing of folders
+     * 
+     * @return \Illuminate\Contracts\View\View
+     */
     public function index()
     {
         $folders = ITFolder::withCount('files')
@@ -24,27 +42,45 @@ class ITFileSharingController extends Controller
         return view('IT-Sharing.index', compact('folders'));
     }
 
+    /**
+     * Display files in a folder
+     * 
+     * @param int $folderId
+     * @return \Illuminate\Contracts\View\View
+     */
     public function files($folderId)
     {
         $folder = ITFolder::findOrFail($folderId);
         $files = ITFileSharing::with(['uploader'])
                              ->where('folder_id', $folderId)
-                             ->paginate(10);
+                             ->get();
         return view('IT-Sharing.files', compact('files', 'folder'));
     }
 
+    /**
+     * Show the form for creating a new file
+     * 
+     * @return \Illuminate\Contracts\View\View
+     */
     public function create()
     {
         $folders = ITFolder::all();
-        return view('IT-Sharing.create', compact('folders'));
+        $item = new ITFileSharing();
+        return view('IT-Sharing.create', compact('folders', 'item'));
     }
 
+    /**
+     * Store a newly created file in storage
+     * 
+     * @param Request $request
+     * @return \Illuminate\Http\RedirectResponse
+     */
     public function store(Request $request)
     {
         $validated = $request->validate([
             'folder_id' => 'required|exists:i_t_folders,id',
             'files' => 'required|array',
-            'files.*' => 'file|max:10240',
+            'files.*' => 'file|max:51200', // 50MB in KB
             'titles' => 'array',
             'titles.*' => 'nullable|string|max:255',
             'descriptions' => 'array',
@@ -73,12 +109,26 @@ class ITFileSharingController extends Controller
                         ->with('success', count($uploadedFiles) . ' file(s) uploaded successfully.');
     }
 
+    /**
+     * Show the form for editing the specified file
+     * 
+     * @param ITFileSharing $itFileSharing
+     * @return \Illuminate\Contracts\View\View
+     */
     public function edit(ITFileSharing $itFileSharing)
     {
         $folders = ITFolder::all();
-        return view('IT-Sharing.edit', compact('itFileSharing', 'folders'));
+        $item = $itFileSharing;
+        return view('IT-Sharing.edit', compact('folders', 'item'));
     }
 
+    /**
+     * Update the specified file in storage
+     * 
+     * @param Request $request
+     * @param ITFileSharing $itFileSharing
+     * @return \Illuminate\Http\RedirectResponse
+     */
     public function update(Request $request, ITFileSharing $itFileSharing)
     {
         $validated = $request->validate([
@@ -88,52 +138,65 @@ class ITFileSharingController extends Controller
             'file' => 'nullable|file|max:10240'
         ]);
 
+        $itFileSharing->title = $validated['title'];
+        $itFileSharing->description = $validated['description'];
+        $itFileSharing->folder_id = $validated['folder_id'];
+
         // Handle file upload if a new file is provided
         if ($request->hasFile('file')) {
-            // Delete old file
-            Storage::disk('public_files')->delete($itFileSharing->file_path);
-            
-            // Store new file
+            // Delete the old file if it exists
+            if ($itFileSharing->file_path && Storage::disk('public_files')->exists($itFileSharing->file_path)) {
+                Storage::disk('public_files')->delete($itFileSharing->file_path);
+            }
+
             $file = $request->file('file');
             $originalName = $file->getClientOriginalName();
             $path = $file->storeAs('it-files', $originalName, 'public_files');
             
-            $validated['file_path'] = $path;
-            $validated['original_filename'] = $originalName;
+            $itFileSharing->file_path = $path;
+            $itFileSharing->original_filename = $originalName;
         }
 
-        $itFileSharing->update($validated);
+        $itFileSharing->save();
 
         return redirect()->route('it-file-sharing.files', $itFileSharing->folder_id)
                         ->with('success', 'File updated successfully.');
     }
 
+    /**
+     * Remove the specified file from storage
+     * 
+     * @param ITFileSharing $itFileSharing
+     * @return \Illuminate\Http\RedirectResponse
+     */
     public function destroy(ITFileSharing $itFileSharing)
     {
         $folderId = $itFileSharing->folder_id;
-        Storage::disk('public_files')->delete($itFileSharing->file_path);
+
+        // Delete the file from storage
+        if ($itFileSharing->file_path && Storage::disk('public_files')->exists($itFileSharing->file_path)) {
+            Storage::disk('public_files')->delete($itFileSharing->file_path);
+        }
+
         $itFileSharing->delete();
 
         return redirect()->route('it-file-sharing.files', $folderId)
                         ->with('success', 'File deleted successfully.');
     }
 
+    /**
+     * Download the specified file
+     * 
+     * @param ITFileSharing $itFileSharing
+     * @return \Symfony\Component\HttpFoundation\BinaryFileResponse
+     */
     public function download(ITFileSharing $itFileSharing)
     {
-        // Check if file exists in storage
         if (!Storage::disk('public_files')->exists($itFileSharing->file_path)) {
-            return back()->with('error', 'File not found.');
+            return redirect()->back()->with('error', 'File not found.');
         }
 
-        // Get file path using Storage facade
         $path = Storage::disk('public_files')->path($itFileSharing->file_path);
-        $mimeType = mime_content_type($path);
-
-        // Return file download response
-        return response()->download(
-            $path,
-            $itFileSharing->original_filename,
-            ['Content-Type' => $mimeType]
-        );
+        return response()->download($path, $itFileSharing->original_filename);
     }
 }

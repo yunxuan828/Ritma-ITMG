@@ -1,46 +1,62 @@
 @extends('layouts.default')
 
+{{-- Page title --}}
 @section('title')
-    Edit Folder
-@endsection
+    Edit Folder - {{ $item->name }}
+@parent
+@stop
 
+@section('header_right')
+    <a href="{{ route('it-file-sharing.index') }}" class="btn btn-primary pull-right">
+        Back to Folders
+    </a>
+@stop
+
+{{-- Page content --}}
 @section('content')
+
 <div class="row">
-    <div class="col-md-12">
-        <div class="box">
+    <div class="col-md-8 col-md-offset-2">
+        <div class="box box-default">
             <div class="box-header with-border">
                 <h3 class="box-title">Edit Folder</h3>
             </div>
             <div class="box-body">
-                <form action="{{ route('it-folders.update', $folder) }}" method="POST">
+                <form class="form-horizontal" method="POST" action="{{ route('it-folders.update', $item->id) }}" autocomplete="off">
                     @csrf
                     @method('PUT')
                     
-                    <div class="form-group">
-                        <label for="name">Folder Name</label>
-                        <input type="text" class="form-control @error('name') is-invalid @enderror" 
-                               id="name" name="name" value="{{ old('name', $folder->name) }}" required>
-                        @error('name')
-                            <div class="invalid-feedback">{{ $message }}</div>
-                        @enderror
+                    <!-- Folder Name -->
+                    <div class="form-group {{ $errors->has('name') ? ' has-error' : '' }}">
+                        <label for="name" class="col-md-3 control-label">Folder Name</label>
+                        <div class="col-md-7">
+                            <input type="text" class="form-control" id="name" name="name" 
+                                value="{{ old('name', $item->name) }}" required>
+                            {!! $errors->first('name', '<span class="alert-msg" aria-hidden="true"><i class="fas fa-times" aria-hidden="true"></i> :message</span>') !!}
+                        </div>
                     </div>
 
-                    <div class="form-group">
-                        <label for="description">Description</label>
-                        <textarea class="form-control @error('description') is-invalid @enderror" 
-                                  id="description" name="description">{{ old('description', $folder->description) }}</textarea>
-                        @error('description')
-                            <div class="invalid-feedback">{{ $message }}</div>
-                        @enderror
+                    <!-- Description -->
+                    <div class="form-group {{ $errors->has('description') ? ' has-error' : '' }}">
+                        <label for="description" class="col-md-3 control-label">Description</label>
+                        <div class="col-md-7">
+                            <textarea class="form-control" id="description" name="description" rows="3">{{ old('description', $item->description) }}</textarea>
+                            {!! $errors->first('description', '<span class="alert-msg" aria-hidden="true"><i class="fas fa-times" aria-hidden="true"></i> :message</span>') !!}
+                        </div>
                     </div>
-
+                    
+                    <!-- Form Actions -->
                     <div class="form-group">
-                        <button type="submit" class="btn btn-primary">Update Folder</button>
-                        <a href="{{ route('it-file-sharing.index') }}" class="btn btn-default">Cancel</a>
+                        <div class="col-md-7 col-md-offset-3">
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fa fa-save"></i> Save
+                            </button>
+                        </div>
                     </div>
                 </form>
             </div>
         </div>
     </div>
 </div>
-@endsection
+
+@stop

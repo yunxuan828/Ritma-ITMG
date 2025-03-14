@@ -3,17 +3,24 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\SoftDeletes;
 
 class ITFolder extends Model
 {
-    use SoftDeletes;
-
     protected $fillable = [
         'name',
         'description',
         'created_by'
     ];
+
+    /**
+     * Get the display name for this folder
+     * 
+     * @return string
+     */
+    public function getDisplayNameAttribute()
+    {
+        return $this->name;
+    }
 
     /**
      * Get the files in this folder

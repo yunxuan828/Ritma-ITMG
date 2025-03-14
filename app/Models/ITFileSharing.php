@@ -16,6 +16,16 @@ class ITFileSharing extends Model
         'folder_id'
     ];
 
+    /**
+     * Get the display name for this file
+     * 
+     * @return string
+     */
+    public function getDisplayNameAttribute()
+    {
+        return $this->title;
+    }
+
     public function uploader()
     {
         return $this->belongsTo(User::class, 'uploaded_by');
